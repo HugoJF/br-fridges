@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Geladeiras no Brasil</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#111;font-size:13px;background:#fff}
+    .wrap{max-width:1100px;margin:0 auto;padding:1.5rem 1rem 3rem}
+    h1{font-size:1.1rem;font-weight:600;margin-bottom:0.2rem}
+    .subtitle{font-size:12px;color:#666;margin-bottom:1.25rem}
+    .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0.75rem}
+    .filters select,.filters input{font-size:12px;padding:5px 9px;border:0.5px solid #d9d9d9;border-radius:6px;background:#fff;color:#111}
+    .filters input{flex:1;min-width:120px}
+    .meta{font-size:11px;color:#666;margin-bottom:8px}
+    .tbl-wrap{overflow-x:auto;border:0.5px solid #ebebeb;border-radius:10px}
+    table{width:100%;border-collapse:collapse;min-width:960px}
+    thead th{background:#f6f6f6;font-weight:500;font-size:11px;color:#666;padding:7px 9px;text-align:left;border-bottom:0.5px solid #ebebeb;white-space:nowrap;cursor:pointer;user-select:none}
+    thead th:hover{color:#111}
+    tbody tr{border-bottom:0.5px solid #ebebeb}
+    tbody tr:last-child{border-bottom:none}
+    tbody tr:hover{background:#f6f6f6}
+    td{padding:7px 9px;vertical-align:middle}
+    td.r{text-align:right;font-variant-numeric:tabular-nums}
+    td.c{text-align:center}
+    .bm{font-weight:500}
+    .badge{display:inline-block;font-size:10px;padding:2px 6px;border-radius:20px;white-space:nowrap}
+    .d{background:#E6F1FB;color:#185FA5;border:0.5px solid #B5D4F4}
+    .i{background:#EAF3DE;color:#3B6D11;border:0.5px solid #C0DD97}
+    .s{background:#FAEEDA;color:#854F0B;border:0.5px solid #FAC775}
+    .f{background:#FBEAF0;color:#993556;border:0.5px solid #F4C0D1}
+    .c2{background:#F1EFE8;color:#5F5E5A;border:0.5px solid #D3D1C7}
+    .yes{color:#3B6D11;font-weight:500}
+    .no{color:#aaa}
+    .unk{color:#ccc}
+    .price{font-weight:500;white-space:nowrap}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Geladeiras no Brasil</h1>
+  <p class="subtitle">59 modelos explorados — preços aproximados de abril de 2026.</p>
+  <div class="filters">
+    <select id="fb"><option value="">Todas as marcas</option></select>
+    <select id="ft"><option value="">Todos os tipos</option></select>
+    <select id="fr"><option value="">Porta revers.</option><option value="1">Sim</option><option value="0">Não</option></select>
+    <input id="fs" type="text" placeholder="Buscar modelo...">
+  </div>
+  <div class="meta" id="ct"></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th data-k="brand">Marca</th>
+        <th data-k="model">Modelo</th>
+        <th data-k="cap">Cap. (L)</th>
+        <th data-k="type">Tipo</th>
+        <th data-k="alt">Altura (cm)</th>
+        <th data-k="lar">Largura (cm)</th>
+        <th data-k="pro">Prof. (cm)</th>
+        <th data-k="rev">Porta revers.</th>
+        <th data-k="inv">Inverter</th>
+        <th data-k="pr">Preço aprox.</th>
+      </tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+</div>
+<script>
+// rev: 1=sim, 0=não, -1=não se aplica (side by side / french door)
+// inv: 1=sim, 0=não, null=não confirmado
+const D=[
+  {brand:"Consul",model:"CRA30FB",        cap:261,type:"c", alt:144,  lar:55,   pro:63.1, rev:0, inv:null,pr:2000},
+  {brand:"Consul",model:"CRD37EB",        cap:334,type:"d", alt:167,  lar:60.3, pro:63.4, rev:0, inv:null,pr:1937},
+  {brand:"Consul",model:"CRM39AB",        cap:340,type:"d", alt:169.5,lar:62.1, pro:71.4, rev:0, inv:null,pr:2779},
+  {brand:"Consul",model:"CRM44AB",        cap:386,type:"d", alt:183.4,lar:62.1, pro:72.4, rev:0, inv:null,pr:2659},
+  {brand:"Consul",model:"CRM44AK",        cap:386,type:"d", alt:183.4,lar:62.1, pro:72.4, rev:0, inv:null,pr:3149},
+  {brand:"Consul",model:"CRE44BB",        cap:397,type:"i", alt:184.7,lar:62.1, pro:71.3, rev:0, inv:null,pr:3519},
+  {brand:"Consul",model:"CRM54HB",        cap:441,type:"d", alt:187,  lar:71.1, pro:73,   rev:0, inv:null,pr:3500},
+  {brand:"Consul",model:"CRM56FB",        cap:451,type:"d", alt:186.3,lar:69.5, pro:71.9, rev:0, inv:null,pr:3500},
+  {brand:"Consul",model:"CRM56MB",        cap:451,type:"d", alt:186,  lar:70.2, pro:72,   rev:0, inv:null,pr:2744},
+  {brand:"Brastemp",model:"BRM44HB",      cap:375,type:"d", alt:176,  lar:62.1, pro:75.5, rev:0, inv:null,pr:3059},
+  {brand:"Brastemp",model:"BRM46MB",      cap:385,type:"d", alt:176,  lar:62.1, pro:70.9, rev:0, inv:null,pr:3500},
+  {brand:"Brastemp",model:"BRE57AK",      cap:443,type:"i", alt:184,  lar:72.5, pro:70.1, rev:0, inv:null,pr:4500},
+  {brand:"Brastemp",model:"BRE57FK",      cap:447,type:"i", alt:184.5,lar:70,   pro:75.5, rev:0, inv:null,pr:4705},
+  {brand:"Brastemp",model:"BRM55FK",      cap:463,type:"d", alt:184.5,lar:70,   pro:75.5, rev:0, inv:null,pr:4769},
+  {brand:"Brastemp",model:"BRE85AK",      cap:588,type:"i", alt:187.9,lar:79.1, pro:83.7, rev:0, inv:null,pr:5405},
+  {brand:"Brastemp",model:"BRO85AK",      cap:554,type:"f", alt:186.4,lar:83.6, pro:79.3, rev:-1,inv:null,pr:6699},
+  {brand:"Electrolux",model:"RE21",       cap:213,type:"c2",alt:140.6,lar:55.5, pro:56.5, rev:0, inv:0,   pr:2196},
+  {brand:"Electrolux",model:"DC35A",      cap:260,type:"d", alt:161.9,lar:54.8, pro:61.3, rev:0, inv:0,   pr:2249},
+  {brand:"Electrolux",model:"TF39S",      cap:310,type:"d", alt:171.5,lar:60,   pro:61,   rev:0, inv:0,   pr:2799},
+  {brand:"Electrolux",model:"TF70",       cap:431,type:"d", alt:176,  lar:70,   pro:73.2, rev:0, inv:0,   pr:2600},
+  {brand:"Electrolux",model:"IB42G",      cap:322,type:"i", alt:184,  lar:60.2, pro:67.5, rev:1, inv:1,   pr:3899},
+  {brand:"Electrolux",model:"IF43",       cap:390,type:"d", alt:176.9,lar:60,   pro:72,   rev:0, inv:null,pr:3000},
+  {brand:"Electrolux",model:"IF46S",      cap:410,type:"d", alt:184,  lar:60,   pro:71.7, rev:0, inv:null,pr:2936},
+  {brand:"Electrolux",model:"IW46S",      cap:409,type:"d", alt:184.7,lar:60,   pro:71.7, rev:0, inv:null,pr:3499},
+  {brand:"Electrolux",model:"DB44S",      cap:400,type:"i", alt:186.6,lar:60.1, pro:74.75,rev:0, inv:null,pr:4199},
+  {brand:"Electrolux",model:"IF55B",      cap:431,type:"d", alt:176,  lar:70,   pro:76,   rev:1, inv:null,pr:5560},
+  {brand:"Electrolux",model:"ES40S",      cap:431,type:"s", alt:178,  lar:83.6, pro:62.3, rev:-1,inv:null,pr:4696},
+  {brand:"Electrolux",model:"IB55S",      cap:488,type:"i", alt:189.5,lar:69.9, pro:74.85,rev:0, inv:1,   pr:4399},
+  {brand:"Electrolux",model:"IB51",       cap:490,type:"i", alt:189.5,lar:69.9, pro:74.9, rev:0, inv:1,   pr:3600},
+  {brand:"Electrolux",model:"IB7",        cap:490,type:"i", alt:189.5,lar:69.9, pro:74.9, rev:0, inv:1,   pr:4064},
+  {brand:"Electrolux",model:"IQ8S",       cap:581,type:"i", alt:190,  lar:83.5, pro:74.2, rev:0, inv:null,pr:7770},
+  {brand:"Electrolux",model:"IM8S",       cap:590,type:"f", alt:190,  lar:83.5, pro:74.2, rev:-1,inv:null,pr:7062},
+  {brand:"Electrolux",model:"IS4S",       cap:435,type:"s", alt:178,  lar:91,   pro:59,   rev:-1,inv:1,   pr:4000},
+  {brand:"Panasonic",model:"NR-BT41PD1X", cap:387,type:"d", alt:180,  lar:60,   pro:77,   rev:0, inv:null,pr:2800},
+  {brand:"Panasonic",model:"NR-BT42BV1X", cap:387,type:"d", alt:180,  lar:60,   pro:74.2, rev:0, inv:null,pr:2800},
+  {brand:"Panasonic",model:"NR-BT44PV3X", cap:391,type:"d", alt:180,  lar:60,   pro:74.2, rev:0, inv:1,   pr:2708},
+  {brand:"Panasonic",model:"NR-BT56PD4X", cap:435,type:"d", alt:174.6,lar:69.7, pro:75.8, rev:0, inv:0,   pr:4853},
+  {brand:"Panasonic",model:"NR-BT71PV4W", cap:483,type:"d", alt:190.1,lar:69.7, pro:75.8, rev:0, inv:1,   pr:4199},
+  {brand:"Panasonic",model:"NR-BB41GV1BB",cap:397,type:"i", alt:186,  lar:60,   pro:75,   rev:0, inv:null,pr:3500},
+  {brand:"Panasonic",model:"NR-BB53GV3B", cap:425,type:"i", alt:185.4,lar:69.5, pro:75.1, rev:0, inv:null,pr:5993},
+  {brand:"Panasonic",model:"NR-BB64PV1B", cap:460,type:"i", alt:185.3,lar:69.4, pro:76,   rev:0, inv:1,   pr:4099},
+  {brand:"Panasonic",model:"NR-BB65GVFB", cap:450,type:"i", alt:185.3,lar:69.4, pro:74.5, rev:0, inv:1,   pr:5399},
+  {brand:"Panasonic",model:"NR-BB71PVFX", cap:480,type:"i", alt:195,  lar:69.5, pro:75.8, rev:0, inv:1,   pr:5299},
+  {brand:"Midea",model:"MDRB548FGD463",   cap:401,type:"i", alt:186,  lar:59.5, pro:67,   rev:0, inv:1,   pr:3400},
+  {brand:"Midea",model:"MD-RT411FGF01",   cap:294,type:"d", alt:176,  lar:59.6, pro:55,   rev:1, inv:null,pr:2279},
+  {brand:"Midea",model:"MD-RT572EVD",     cap:425,type:"d", alt:185,  lar:59.9, pro:71.4, rev:1, inv:null,pr:2998},
+  {brand:"Midea",model:"RT611EVK",        cap:473,type:"d", alt:172,  lar:70,   pro:71.4, rev:1, inv:null,pr:3500},
+  {brand:"Midea",model:"MD-RT650EVK013",  cap:491,type:"d", alt:188,  lar:70,   pro:69.1, rev:1, inv:null,pr:5000},
+  {brand:"Midea",model:"MDRS598FGA041",   cap:442,type:"s", alt:177.5,lar:83.5, pro:63.5, rev:-1,inv:null,pr:4274},
+  {brand:"Midea",model:"MD-RS710FGD281",  cap:511,type:"s", alt:176.5,lar:89.7, pro:70.6, rev:-1,inv:null,pr:5549},
+  {brand:"Midea",model:"MD-RF691FGD463",  cap:474,type:"f", alt:189.8,lar:83.3, pro:65.3, rev:-1,inv:null,pr:5644},
+  {brand:"LG",model:"GN-B392PXGB",       cap:395,type:"d", alt:176,  lar:70,   pro:68,   rev:1, inv:null,pr:3000},
+  {brand:"LG",model:"GV-B409SLUV",       cap:386,type:"i", alt:185,  lar:70,   pro:74,   rev:0, inv:null,pr:3500},
+  {brand:"LG",model:"GC-B569NLLM",       cap:451,type:"i", alt:185,  lar:70,   pro:70,   rev:0, inv:null,pr:3922},
+  {brand:"Samsung",model:"RL4353RBASL",   cap:435,type:"i", alt:185,  lar:70,   pro:69,   rev:0, inv:null,pr:3500},
+  {brand:"Hisense",model:"RT3N375",       cap:379,type:"d", alt:172,  lar:63.5, pro:70,   rev:0, inv:null,pr:2599},
+  {brand:"Hisense",model:"RS-57WL",       cap:397,type:"i", alt:172,  lar:70.4, pro:69.4, rev:1, inv:null,pr:4499},
+  {brand:"Hisense",model:"RS-73WL",       cap:499,type:"d", alt:172.5,lar:79.4, pro:69.8, rev:0, inv:null,pr:4559},
+  {brand:"Hisense",model:"RS-69W1AIQI",   cap:533,type:"s", alt:179.3,lar:91,   pro:68.6, rev:-1,inv:null,pr:8158},
+  {brand:"HQ",model:"460SBSFF",           cap:460,type:"s", alt:178.5,lar:70,   pro:68,   rev:-1,inv:null,pr:3089},
+];
+
+const TL={c2:"Compacta",d:"Duplex",i:"Inverse",s:"Side by Side",f:"French Door"};
+const TC={c2:"c2",d:"d",i:"i",s:"s",f:"f"};
+function revLabel(v){
+  if(v===1)return '<span class="yes">✓ Sim</span>';
+  if(v===0)return '<span class="no">Não</span>';
+  return '<span class="no">N/A</span>';
+}
+function invLabel(v){
+  if(v===1)return '<span class="yes">✓ Sim</span>';
+  if(v===0)return '<span class="no">Não</span>';
+  return '<span class="unk">—</span>';
+}
+let sk="pr",sd=1,fb_="",ft_="",fr_="",fs_="";
+function fmtP(v){return"R$ "+v.toLocaleString("pt-BR")}
+function render(){
+  const rows=D.filter(r=>{
+    if(fb_&&r.brand!==fb_)return false;
+    if(ft_&&r.type!==ft_)return false;
+    if(fr_==="1"&&r.rev!==1)return false;
+    if(fr_==="0"&&r.rev!==0)return false;
+    if(fs_){const q=fs_.toLowerCase();if(!r.brand.toLowerCase().includes(q)&&!r.model.toLowerCase().includes(q))return false}
+    return true;
+  }).sort((a,b)=>{
+    let av=a[sk],bv=b[sk];
+    if(sk==="rev"){av=a.rev;bv=b.rev;}
+    if(av==null&&bv==null)return 0;
+    if(av==null)return 1;
+    if(bv==null)return -1;
+    return typeof av==="string"?av.localeCompare(bv)*sd:(av-bv)*sd;
+  });
+  document.getElementById("ct").textContent=rows.length+" modelo"+(rows.length!==1?"s":"")+" — "+rows.filter(r=>r.rev===1).length+" com porta reversível";
+  document.getElementById("tb").innerHTML=rows.map(r=>`<tr>
+    <td class="bm">${r.brand}</td>
+    <td>${r.model}</td>
+    <td class="r">${r.cap}</td>
+    <td><span class="badge ${TC[r.type]||r.type}">${TL[r.type]||r.type}</span></td>
+    <td class="r">${r.alt}</td>
+    <td class="r">${r.lar}</td>
+    <td class="r">${r.pro}</td>
+    <td class="c">${revLabel(r.rev)}</td>
+    <td class="c">${invLabel(r.inv)}</td>
+    <td class="price">${fmtP(r.pr)}</td>
+  </tr>`).join("");
+  document.querySelectorAll("thead th[data-k]").forEach(t=>{
+    const a=t.querySelector("span.arr");
+    if(a)a.textContent=t.dataset.k===sk?(sd>0?" ↑":" ↓"):"";
+  });
+}
+function init(){
+  const brands=[...new Set(D.map(r=>r.brand))].sort();
+  const bs=document.getElementById("fb");
+  brands.forEach(b=>{const o=document.createElement("option");o.value=b;o.textContent=b;bs.appendChild(o)});
+  const types=[...new Set(D.map(r=>r.type))];
+  const ts=document.getElementById("ft");
+  ["d","i","s","f","c2"].forEach(t=>{if(types.includes(t)){const o=document.createElement("option");o.value=t;o.textContent=TL[t];ts.appendChild(o)}});
+  document.querySelectorAll("thead th[data-k]").forEach(th=>{
+    const a=document.createElement("span");a.className="arr";th.appendChild(a);
+    th.addEventListener("click",()=>{const k=th.dataset.k;sk===k?sd*=-1:(sk=k,sd=1);render()});
+  });
+  document.getElementById("fb").onchange=e=>{fb_=e.target.value;render()};
+  document.getElementById("ft").onchange=e=>{ft_=e.target.value;render()};
+  document.getElementById("fr").onchange=e=>{fr_=e.target.value;render()};
+  document.getElementById("fs").oninput=e=>{fs_=e.target.value;render()};
+  render();
+}
+init();
+</script>
+</body>
+</html>
