@@ -6,7 +6,7 @@ A searchable, sortable reference table of refrigerators available in the Brazili
 
 ## What's included
 
-59 models across 9 brands: Consul, Brastemp, Electrolux, Panasonic, Midea, LG, Samsung, Hisense, and HQ.
+62 models across 9 brands: Consul, Brastemp, Electrolux, Panasonic, Midea, LG, Samsung, Hisense, and HQ.
 
 Each entry covers:
 
