@@ -6,7 +6,7 @@ A searchable, sortable reference table of refrigerators available in the Brazili
 
 ## What's included
 
-62 models across 9 brands: Consul, Brastemp, Electrolux, Panasonic, Midea, LG, Samsung, Hisense, and HQ.
+109 models across 9 brands: Consul, Brastemp, Electrolux, Panasonic, Midea, LG, Samsung, Hisense, and HQ.
 
 Each entry covers:
 
@@ -15,6 +15,7 @@ Each entry covers:
 - **Dimensions** — height, width, depth (cm)
 - **Reversible door** — whether the hinge side can be swapped
 - **Inverter compressor** — where confirmed
+- **Monthly power consumption** — from official INMETRO / PBE data where available
 - **Approximate price** (BRL)
 
 ## Usage
@@ -26,6 +27,8 @@ Filters: brand, type, reversible door, and free-text search. Click any column he
 ## Data & accuracy
 
 Prices and specs were gathered from retailer listings and manufacturer pages. They reflect availability at the time of research and may be outdated. Use as a starting point for comparison, not as a purchase guarantee.
+
+Monthly power consumption is sourced from official INMETRO / PBE data when a reliable current match exists. The fetch/match process is documented in [INMETRO_PBE.md](INMETRO_PBE.md).
 
 ## Contributing
 
