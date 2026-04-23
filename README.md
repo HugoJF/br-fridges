@@ -1,28 +1,32 @@
-# Geladeiras no Brasil
+# Geladeiras no Brasil — Data Repository
 
-A searchable, sortable reference table of refrigerators available in the Brazilian market, with approximate prices from April 2026.
+Canonical fridge dataset for the Brazilian market. 109 models, April 2026 pricing.
 
-**[View the table →](https://hugojf.github.io/br-fridges/)**
+**Frontend:** [br-fridges-web](https://github.com/HugoJF/br-fridges-web) → [hugojf.github.io/br-fridges-web](https://hugojf.github.io/br-fridges-web/)
 
-## What's included
+## Data
 
-109 models across 9 brands: Consul, Brastemp, Electrolux, Panasonic, Midea, LG, Samsung, Hisense, and HQ.
+**`fridges.json`** — machine-readable array of all models. Fetch via raw URL:
 
-Each entry covers:
+```
+https://raw.githubusercontent.com/HugoJF/br-fridges/main/fridges.json
+```
 
-- **Capacity** (liters)
-- **Type** — Duplex, Inverse, Side by Side, French Door, Compacta
-- **Dimensions** — height, width, depth (cm)
-- **Reversible door** — whether the hinge side can be swapped
-- **Inverter compressor** — where confirmed
-- **Monthly power consumption** — from official INMETRO / PBE data where available
-- **Approximate price** (BRL)
+Schema defined in `fridge-types.ts`. Each entry:
 
-## Usage
+- `id` — slug (e.g. `consul-cra30fb`)
+- `brand`, `model`
+- `capacity` (liters)
+- `type` — `compact` | `top-freezer` | `bottom-freezer` | `side-by-side` | `french-door`
+- `width`, `height`, `depth` (cm); `depthWithDoors` (cm, nullable)
+- `reversibleDoors` (boolean | null)
+- `inverterCompressor` (boolean | null)
+- `monthlyKwh` (nullable — from INMETRO/PBE where available)
+- `price` (approximate BRL)
 
-Open `index.html` in any browser — no build step, no dependencies.
+## Source notes
 
-Filters: brand, type, reversible door, and free-text search. Click any column header to sort.
+`models/` — per-model research notes with sourcing details.
 
 ## Data & accuracy
 
